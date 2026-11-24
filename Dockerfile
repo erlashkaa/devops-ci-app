@@ -16,5 +16,5 @@ RUN chown -R app:app /srv/app
 USER app
 EXPOSE 5000
 
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app.app:app"]
+CMD ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 
