@@ -15,4 +15,4 @@ def index():
 @app.get("/health")
 def health():
     """Return the service health status."""
-    return jsonify(status="unhealthy")
+    return jsonify(status="ok")
