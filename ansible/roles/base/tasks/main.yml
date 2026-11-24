@@ -1,0 +1,16 @@
+---
+- name: Install base packages
+  ansible.builtin.apt:
+    name: [ca-certificates, curl, ufw]
+    state: present
+    update_cache: true
+- name: Enable Docker
+  ansible.builtin.service:
+    name: docker
+    state: started
+    enabled: true
+- name: Add deployment user to Docker group
+  ansible.builtin.user:
+    name: "{{ deploy_user }}"
+    groups: docker
+    append: true

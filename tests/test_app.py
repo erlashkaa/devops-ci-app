@@ -9,6 +9,7 @@ def test_index():
     response = client.get("/")
     assert response.status_code == 200
     assert response.get_json()["service"] == "devops-ci-app"
+    assert response.get_json()["version"] == "1.0.0"
 
 
 def test_health():

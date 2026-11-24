@@ -1,0 +1,10 @@
+server {
+    listen {{ public_port }} default_server;
+    server_name 192.168.56.10 devops.local _;
+
+    location / {
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_pass http://{{ app_bind }}:{{ app_port }};
+    }
+}
