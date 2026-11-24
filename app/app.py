@@ -12,7 +12,7 @@ def index():
     return jsonify(
         service="devops-ci-app",
         student="Gabdushov Erlan",
-        version="1.0.0",
+        version="1.1.0-gabdushov",
     )
 
 
