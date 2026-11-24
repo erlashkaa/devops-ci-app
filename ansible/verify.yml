@@ -1,0 +1,21 @@
+---
+- name: Verify deployed service
+  hosts: app
+  become: true
+  tasks:
+    - name: Check public endpoint
+      ansible.builtin.uri:
+        url: "http://127.0.0.1:{{ public_port }}/health"
+        status_code: 200
+        return_content: true
+      register: health
+      changed_when: false
+      failed_when: health.json.status != "ok"
+    - name: Inspect application container
+      ansible.builtin.command: "docker inspect -f '{{ '{{' }}.State.Running{{ '}}' }}' {{ app_container }}"
+      register: container
+      changed_when: false
+      failed_when: container.stdout != "true"
+    - name: Verify exposed services
+      ansible.builtin.shell: "ss -lnt | grep -E ':(80|2222) '"
+      changed_when: false

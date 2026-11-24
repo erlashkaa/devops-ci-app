@@ -1,0 +1,29 @@
+---
+- name: Configure hardened SSH port
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?Port '
+    line: "Port {{ ssh_port }}"
+  notify: Restart SSH
+- name: Disable root SSH login
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PermitRootLogin '
+    line: PermitRootLogin no
+  notify: Restart SSH
+- name: Disable SSH passwords
+  ansible.builtin.lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication '
+    line: PasswordAuthentication no
+  notify: Restart SSH
+- name: Allow public services in firewall
+  community.general.ufw:
+    rule: allow
+    port: "{{ item }}"
+    proto: tcp
+  loop: ["80", "{{ ssh_port }}"]
+- name: Enable firewall
+  community.general.ufw:
+    state: enabled
+    policy: deny

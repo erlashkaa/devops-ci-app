@@ -1,0 +1,27 @@
+---
+- name: Install Nginx
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+- name: Configure reverse proxy
+  ansible.builtin.template:
+    src: app.conf.j2
+    dest: /etc/nginx/sites-available/devops-app
+    mode: "0644"
+  notify: Reload Nginx
+- name: Enable reverse proxy
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/devops-app
+    dest: /etc/nginx/sites-enabled/devops-app
+    state: link
+  notify: Reload Nginx
+- name: Disable default site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload Nginx
+- name: Enable Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: true

@@ -1,0 +1,7 @@
+app_image: ghcr.io/erlashkaa/devops-ci-app:68f50d479b8bef03dabe1559e3bf55b913663dc4
+app_container: devops-ci-app
+app_bind: 127.0.0.1
+app_port: 5000
+public_port: 80
+deploy_user: devops
+ssh_port: 2222

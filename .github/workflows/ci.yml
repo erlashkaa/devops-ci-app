@@ -69,3 +69,28 @@ jobs:
           docker push "$IMAGE:${GITHUB_SHA}"
           docker push "$IMAGE:latest"
 
+  deploy:
+    needs: image
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && success()
+    runs-on: [self-hosted, devops-vm]
+    permissions:
+      contents: read
+    concurrency:
+      group: deploy-devops-vm
+      cancel-in-progress: false
+    env:
+      VM_HOST: 192.168.56.10
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - name: Deploy immutable image with Ansible
+        working-directory: ansible
+        run: >-
+          ~/.local/bin/ansible-playbook site.yml
+          -e "app_image=ghcr.io/erlashkaa/devops-ci-app:${GITHUB_SHA}"
+      - name: Verify service through Nginx
+        run: >-
+          curl --fail --silent --show-error
+          "http://${VM_HOST}/health" | grep -q '"status":"ok"'
+
